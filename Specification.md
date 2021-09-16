@@ -4,10 +4,15 @@ Repo: https://github.com/JosephGerani/NotesOfZeal
 Date: 9/15/2021
 ## Product Name: NotesOfZeal
 ## Contributors: 
+
 James Cai: https://github.com/jcai5
+
 Joseph Gerani: https://github.com/JosephGerani
+
 Richard Nguyen: https://github.com/richardnguyen734
+
 Alex Bhandari: https://github.com/albhandari
+
 ### Problem Statement: The number one issue for students with studying is that students often procrastinate. To help fix the issue, we will develop an app that will help students study in three different ways. These three methods are memorizing, taking good notes, and managing their time efficiently. 
 ### Non-functional Requirements: The source code should be compatible in cross-platform use. No Operating System specific system calls should be used. It should not take more than a few seconds (preferably less than 3 seconds) to start the program. The program should be preferably compiled, not interpreted (plan to write in compiled language, to avoid the natural slowness of languages such as Python and not require an external program to be executed).
  
