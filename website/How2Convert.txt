@@ -1,0 +1,5 @@
+pip install markdown
+pip install pdfkit
+You need these for the program to run.
+Other than that, just run the file "MarksConvert" and make sure the file 
+is in the same directory lol.
