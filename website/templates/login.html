@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{% with messages = get_flashed_messages() %}
+{% if messages %}
+<ul>
+    {%for message in messages %}
+    <li>{{ message }}</li>
+    {% endfor %}
+</ul>
+{% endif %}
+{% endwith %}
+
+
+<div class="bg-body rounded mx-auto" style="width: 125px;">
+    <h1>Sign in</h1>
+</div>
+
+
+<div class="shadow p-3 mb-5 bg-primary bg-opacity-50 rounded mx-auto" style="width: 400px;">
+    <form method = "POST" novalidate>
+        {{ form.hidden_tag() }}
+    
+        <p>
+            {{ form.username.label(class="form-label") }}
+            {{ form.username(class="form-control") }}
+        </p>
+        <p>
+            {{ form.password.label(class="form-label") }}
+            {{ form.password(class="form-control") }}
+        </p>
+        <p>
+            {{ form.submit(class="btn btn-primary") }}
+        </p>
+        
+    
+    </form>
+
+</div>
+
+
+{% endblock %}
+
+
+
+
