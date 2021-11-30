@@ -9,6 +9,10 @@ class User(UserMixin, db.Model):
     email = db.Column(db.String(50), unique = True)
     password = db.Column(db.String(80))
 
+class ToDoList(UserMixin, db.Model):
+    id = db.Column(db.Integer, primary_key = True)
+    name = db.Column(db.String(64))
+    complete = db.Column(db.Boolean)
 
 @logging.user_loader
 def load_user(user_id):
