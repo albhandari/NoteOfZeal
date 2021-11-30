@@ -16,6 +16,18 @@ def mainMenu():
 def home():
     return render_template('home.html')
 
+@myobj.route("/deleteacc")
+@login_required
+def deleteacc():
+
+    currentUser = User.query.filter_by(id=current_user.id).first()
+    logout_user()
+    db.session.delete(currentUser)
+    db.session.commit()
+    flash(f'User has been deleted')
+
+    return redirect(url_for('login'))
+
 @myobj.route("/login", methods = ['GET', 'POST'])
 def login():
     form = LoginForm()
