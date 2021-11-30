@@ -14,6 +14,18 @@ class ToDoList(UserMixin, db.Model):
     name = db.Column(db.String(64))
     complete = db.Column(db.Boolean)
 
+class Flashcard(UserMixin, db.Model):
+    id = db.Column(db.Integer, primary_key = True)
+    owner = db.Column(db.String(64))
+    fctitle = db.Column(db.String(64))
+    fcterm =  db.Column(db.String(64))
+    fcdesc = db.Column(db.String(5000))
+    fcurl = db.Column(db.Integer)
+    sharedwith = db.Column(db.String(64))
+
+
+
+
 @logging.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))

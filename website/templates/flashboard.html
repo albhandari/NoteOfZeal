@@ -1,25 +1,56 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="bg-body rounded mx-auto" style="width: 680px;">
-    <h2>Hello User, Get studying with the tools above!</h2>
 
+<div class="bg-body rounded mx-auto" style="width: 680px;">
+    <h2>Hello User, Utilize the Flashcard tools!</h2>
 </div>
 
-
-{% with messages = get_flashed_messages() %}
-{% if messages %}
-    {% for message in messages %}
-    <h1>{{ message }}</h1>
-    {% endfor %}
-{% endif %}
-{% endwith %}
-<br>
 <nav class="navbar navbar-expand-lg navbar-dark bg-primary"></nav>
+
+<br>
 
 <div class="card">
     <div class="card-header">
-      Your FlashCards
+      Flash-Cards
+    </div>
+    <div class="card-body">
+      <h5 class="card-title">Make your own Flash-Cards</h5>
+      <p class="card-text">Click the button below to get started!</p>
+      <a href="{{ url }}" class="btn btn-primary">Study Time</a>
+    </div>
+</div>
+
+<br/>
+
+<div class="card">
+    <div class="card-header">
+      Your Flash-Cards
+ </div>
+    <div class="card-body">
+        
+
+        <div class="row">
+            <div class="col-sm-2">
+              <div class="card">
+                <div class="card-body">
+                  <h5 class="card-title">FlashCard 1 Title</h5>
+                  <p class="card-text">Small Description</p>
+                  <a href="#" class="btn btn-primary">Go somewhere</a>
+                </div>
+              </div>
+            </div>
+        </div>
+
+
+    </div>
+</div>
+
+<br/>
+
+<div class="card">
+    <div class="card-header">
+      Shared Flash-Cards
     </div>
     <div class="card-body">
         
@@ -56,12 +87,7 @@
 
 
     </div>
-  </div>
-
-
-
-    
-
+</div>
 
 
 

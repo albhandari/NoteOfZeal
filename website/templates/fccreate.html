@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+
+
+
+{% block content %}
+{% with messages = get_flashed_messages() %}
+{% if messages %}
+<ul>
+    {%for message in messages %}
+    <li>{{ message }}</li>
+    {% endfor %}
+</ul>
+{% endif %}
+{% endwith %}
+
+
+<div class="bg-body rounded mx-auto" style="width: 409px;">
+    <h1>Create your flashcards!</h1>
+</div>
+
+
+<div class="shadow p-3 mb-5 bg-primary bg-opacity-50 rounded mx-auto" style="width: 400px;">
+    <form method = "POST" novalidate>
+        {{ form.hidden_tag() }}
+    
+        <p>
+            {{ form.fctitle.label(class="form-label") }}
+            {{ form.fctitle(class="form-control") }}
+        </p>
+        <p>
+            {{ form.fcword.label(class="form-label") }}
+            {{ form.fcword(class="form-control") }}
+        </p>
+        <p>
+            {{ form.fcdef.label(class="form-label") }}
+            {{ form.fcdef(class="form-control") }}
+        </p>
+        <p>
+            {{ form.addfc(class="btn btn-primary") }}
+        </p>
+
+
+    </form>
+
+</div>
+
+<div class="bg-body rounded mx-auto" style="width: 200px;">
+    <a class="btn btn-dark" href="/home" role="button">Finish Creating Flashcard</a>
+</div>
+
+<br/>
+
+
+
+<div class="row">
+    {% for flashcard in displaylist %}
+    <div class="col-sm-3">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">{{ flashcard.term }}</h5>
+                <p class="card-text">{{ flashcard.definition }}</p>
+                <p class="btn btn-primary">Added </p>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+
+
+
+
+{% endblock %}
+
+
+

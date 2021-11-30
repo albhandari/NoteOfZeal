@@ -17,3 +17,14 @@ class SignupForm(FlaskForm):
 class ToDoListForm(FlaskForm):
     name = StringField('Enter a task', validators = [InputRequired()])
     addtask = SubmitField('Add task')
+
+class FlashCardForm(FlaskForm):
+    fctitle = StringField('Title', validators = [InputRequired()])
+    fcword = StringField('Term', validators = [InputRequired()])
+    fcdef = StringField('Description', validators = [InputRequired()])
+    addfc = SubmitField('Add')
+
+
+
+
+

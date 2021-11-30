@@ -1,20 +1,36 @@
 from website import myobj, db
-from website.models import User, ToDoList
+from website.models import User, ToDoList, Flashcard
 from flask import render_template, flash, redirect, url_for, request
-from website.forms import LoginForm, SignupForm, ToDoListForm
+from website.forms import LoginForm, SignupForm, ToDoListForm, FlashCardForm
 from flask_bootstrap import Bootstrap
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import login_user, login_required, logout_user, current_user
+
+from random import randint
+
+
 
 @myobj.route("/")
 @login_required
 def mainMenu():
     return redirect(url_for('login'))
 
+
+
 @myobj.route("/home")
 @login_required
 def home():
+    
     return render_template('home.html')
+
+@myobj.route("/flashboard")
+@login_required
+def flashboard():
+    displaylist.clear() 
+    flashcardurl = uniqueurl()
+    url = f'/makeflashcards/{flashcardurl}'
+
+    return render_template('flashboard.html', url = url)
 
 @myobj.route("/deleteacc")
 @login_required
@@ -80,6 +96,7 @@ def todotlist():
         tasks = ToDoList.query.all()
         return render_template('todolist.html', tasks = tasks, form = form, title = title)
 
+
 @myobj.route('/delete/<int:id>')
 def delete(id):
     delete_task = ToDoList.query.get_or_404(id)
@@ -89,3 +106,34 @@ def delete(id):
         return redirect ('/todolist')
     except:
         return flash ('Error')
+
+
+displaylist = []
+@login_required
+@myobj.route('/makeflashcards/<int:num>', methods = ['GET', 'POST'])
+def makeflashcards(num):
+    form = FlashCardForm()
+    
+    if form.validate_on_submit():  #if the user creates a new flashcard
+        flashcard = Flashcard(owner = current_user.username, fctitle = form.fctitle.data, fcterm = form.fcword.data, fcdesc = form.fcdef.data, fcurl = num, sharedwith = 'admin')
+        db.session.add(flashcard)
+        db.session.commit()
+
+        displaylist.append({'term' : form.fcword.data, 'definition' : form.fcdef.data})
+    
+    return render_template('fccreate.html', form = form, displaylist = displaylist)
+
+
+
+def fourdigitcombo():
+    return (1000 * randint(0,9)) + (100 *randint(0,9)) +  (10 * randint(0,9)) + randint(0,9)
+
+def inthedatabase(num):
+    return  db.session.query(db.exists().where(Flashcard.fcurl == num)).scalar()
+
+def uniqueurl():
+    finalnum = fourdigitcombo()
+    while(inthedatabase(finalnum)):
+        finalnum = fourdigitcombo()
+    return finalnum
+
