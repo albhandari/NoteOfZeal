@@ -30,7 +30,16 @@ def flashboard():
     flashcardurl = uniqueurl()
     url = f'/makeflashcards/{flashcardurl}'
 
-    return render_template('flashboard.html', url = url)
+    thelist = listofurls()
+
+
+
+    
+
+
+
+
+    return render_template('flashboard.html', url = url, thelist = thelist)
 
 @myobj.route("/deleteacc")
 @login_required
@@ -136,4 +145,19 @@ def uniqueurl():
     while(inthedatabase(finalnum)):
         finalnum = fourdigitcombo()
     return finalnum
+
+def listofurls():
+    templist = []
+    flashcards = Flashcard.query.filter_by(owner = current_user.username).all()
+    for flashcard in flashcards:
+        templist.append({'url': flashcard.fcurl, 'title':flashcard.fctitle})
+    
+    noduplicates = []
+    for items in templist:
+        if items not in noduplicates:
+            noduplicates.append(items) 
+    
+    return noduplicates
+
+    
 
