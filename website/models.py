@@ -23,6 +23,15 @@ class Flashcard(UserMixin, db.Model):
     fcurl = db.Column(db.Integer)
     sharedwith = db.Column(db.String(64))
 
+class Tracker(UserMixin, db.Model):
+    id = db.Column(db.Integer, primary_key = True)
+    username = db.Column(db.String(15), unique = True)
+    mostrecent = db.Column(db.Integer)
+    secondrecent = db.Column(db.Integer) 
+    thirdrecent = db.Column(db.Integer)
+    logintime = db.Column(db.Integer)
+    logouttime = db.Column(db.Integer)
+
 
 
 

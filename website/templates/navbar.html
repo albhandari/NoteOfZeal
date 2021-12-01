@@ -21,8 +21,9 @@
             </ul>
           </li>
         </ul>
-        <form class="d-flex">
-          <input class="form-control me-2" type="search" placeholder="Search Flashcards" aria-label="Search">
+        <form method ="POST" action="{{ url_for('search')}}" class="d-flex">
+          {{ form.hidden_tag() }}
+          <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search", name = "searched">
           <button class="btn btn-dark" type="submit">Search</button>
           <a href="/logout" class="btn btn-danger" role="button" aria-disabled="true">Logout</a>
         </form>

@@ -1,7 +1,7 @@
 from website import myobj, db
 from website.models import User, ToDoList, Flashcard
 from flask import render_template, flash, redirect, url_for, request
-from website.forms import LoginForm, SignupForm, ToDoListForm, FlashCardForm
+from website.forms import LoginForm, SignupForm, ToDoListForm, FlashCardForm, SearchForm
 from flask_bootstrap import Bootstrap
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import login_user, login_required, logout_user, current_user
@@ -20,8 +20,13 @@ def mainMenu():
 @myobj.route("/home")
 @login_required
 def home():
-    
-    return render_template('home.html')
+    displaylist.clear() 
+    flashcardurl = uniqueurl()
+    url = f'/makeflashcards/{flashcardurl}'
+
+    thelist = listofurls()
+
+    return render_template('home.html', url = url, thelist = thelist)
 
 @myobj.route("/flashboard")
 @login_required
@@ -31,11 +36,6 @@ def flashboard():
     url = f'/makeflashcards/{flashcardurl}'
 
     thelist = listofurls()
-
-
-
-    
-
 
 
 
@@ -65,6 +65,24 @@ def login():
 
         return '<h1>Invalid username or password</h1>'
     return render_template('login.html', form = form)
+
+@myobj.context_processor
+def base():
+    form = SearchForm()
+    return dict(form=form)
+
+
+
+@myobj.route('/search', methods = ["POST"])
+def search():
+    form = SearchForm()
+    flashcards = Flashcard.query
+    if form.validate_on_submit():
+        form.searched = form.searched.data
+        templist = similarity(form.searched)
+        
+        return render_template('search.html', form = form, searched = form.searched, templist = templist)
+
 
 
 @myobj.route('/logout')
@@ -133,6 +151,21 @@ def makeflashcards(num):
     return render_template('fccreate.html', form = form, displaylist = displaylist)
 
 
+@login_required
+@myobj.route('/renderfc/<int:num>')
+def renderfc(num):
+    templist = []
+    flashcards = Flashcard.query.filter_by(fcurl = num).all()
+    for flashcard in flashcards:
+        title = flashcard.fctitle
+        templist.append({'term': flashcard.fcterm, 'description':flashcard.fcdesc})
+    
+
+
+
+    return render_template('renderfc.html', title = title, templist = templist)
+
+
 
 def fourdigitcombo():
     return (1000 * randint(0,9)) + (100 *randint(0,9)) +  (10 * randint(0,9)) + randint(0,9)
@@ -158,6 +191,21 @@ def listofurls():
             noduplicates.append(items) 
     
     return noduplicates
+
+def similarity(phrase):
+    templist = []
+    flashcards = Flashcard.query.filter_by(owner = current_user.username).all()
+    for flashcard in flashcards:
+        if(phrase in flashcard.fctitle or phrase in flashcard.fcdesc):
+            templist.append({'url': flashcard.fcurl, 'title':flashcard.fctitle})
+    
+    noduplicates = []
+    for items in templist:
+        if items not in noduplicates:
+            noduplicates.append(items) 
+    
+    return noduplicates
+    
 
     
 

@@ -26,7 +26,7 @@
 
 <div class="card">
     <div class="card-header">
-      Recent Flash-Cards
+      Your Flash-Cards
     </div>
 <div class="row">
     {% for items in thelist %}
@@ -35,7 +35,7 @@
           <div class="card-body">
             <h5 class="card-title">{{ items.title }}</h5>
             <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
-            <a href="{{ items.url }}" class="btn btn-primary">View</a>
+            <a href="/renderfc/{{ items.url }}" class="btn btn-primary">View</a>
           </div>
         </div>
       </div>

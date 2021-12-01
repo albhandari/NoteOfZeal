@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+
+<div class="mx-auto" style="width: 1000px;">
+    <div class="card text-center">
+        <div class="card-header">
+          NotesOfZeal
+        </div>
+        <div class="card-body">
+          <h5 class="card-title">{{title}}</h5>
+        </div>
+        <div class="card-footer text-muted">
+          <br>
+        </div>
+    </div>
+</div>
+
+<br>
+
+{% for items in templist %} 
+<div class="mx-auto" style="width: 600px;">
+    <div class="row">
+        <div class="col-sm-6">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">{{ items.term }}</h5>
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-6">
+          <div class="card">
+            <div class="card-body">
+              <p1 class="card-text">{{ items.description }}</p1>
+            </div>
+          </div>
+        </div>
+    </div>
+</div>
+<br>
+{% endfor %}
+
+{% endblock %}
