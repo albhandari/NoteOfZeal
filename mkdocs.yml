@@ -1,4 +1,13 @@
 site_name: NotesOfZeal
 nav:
     - Home: index.md
+    - Login/Signup/Signout: login.md
+    - Delete Account: deleteaccount.md
+    - Create Flashcards: createflash.md
+    - Render Flashcards: renderflash.md
+    - Search Flashcards: searchflash.md
+    - Create To Do List: todolist.md
+    - Share Flash Cards: shareflash.md
+    - Study Tracker: studytrack.md
+    - Markdown to HTML: mdtohtml.md
 theme: readthedocs
