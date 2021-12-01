@@ -9,25 +9,30 @@ from flask_login import login_user, login_required, logout_user, current_user
 from random import randint
 
 
-
+#initial page when loading up is redirected to login-page
 @myobj.route("/")
 @login_required
 def mainMenu():
     return redirect(url_for('login'))
 
 
-
+#home page
 @myobj.route("/home")
 @login_required
 def home():
+
+    #clears flashcards from /makeflashcards
+    #so there isn't visual conflict
     displaylist.clear() 
-    flashcardurl = uniqueurl()
+    flashcardurl = uniqueurl()                  #url for each specific flashcard
     url = f'/makeflashcards/{flashcardurl}'
 
     thelist = listofurls()
 
     return render_template('home.html', url = url, thelist = thelist)
 
+
+#page for all the flashcards related implementation
 @myobj.route("/flashboard")
 @login_required
 def flashboard():
@@ -41,6 +46,8 @@ def flashboard():
 
     return render_template('flashboard.html', url = url, thelist = thelist)
 
+
+#uses current_User from flask_login to get current User id and removes from the sqldatabase
 @myobj.route("/deleteacc")
 @login_required
 def deleteacc():
@@ -53,6 +60,8 @@ def deleteacc():
 
     return redirect(url_for('login'))
 
+
+#simple login implementation, even hashes the password in the database
 @myobj.route("/login", methods = ['GET', 'POST'])
 def login():
     form = LoginForm()
@@ -66,13 +75,15 @@ def login():
         flash(f'Invalid username or password')
     return render_template('login.html', form = form)
 
+
+#wrapper to tell where to locate the form in NAV bar 
 @myobj.context_processor
 def base():
     form = SearchForm()
     return dict(form=form)
 
 
-
+#When clicked on the search on nav bar, redirects to /search to find the flashcard related to user's search term
 @myobj.route('/search', methods = ['GET',"POST"])
 def search():
     form = SearchForm()
@@ -84,17 +95,18 @@ def search():
         return render_template('search.html', form = form, searched = form.searched, templist = templist)
 
 
-
+#Logs user out
 @myobj.route('/logout')
 @login_required
 def logout():
     logout_user()
     return redirect(url_for('login'))
 
+
+#basic signup and uses hashpassword to store data too
 @myobj.route('/signup', methods = ['GET', 'POST'])
 def signup():
     form = SignupForm()
-
 
     if form.validate_on_submit():
         hashedpassword = generate_password_hash(form.password.data, method = 'sha256')
@@ -106,10 +118,11 @@ def signup():
 
         return redirect ('/login')
 
-
-
     return render_template('signup.html', form = form)
 
+
+#To-do list that allows user to store bullet point list
+#which they can check off and will be removed from the database
 @myobj.route('/todolist', methods = ['GET', 'POST'])
 def todotlist():
     form = ToDoListForm()
@@ -127,7 +140,7 @@ def todotlist():
         tasks = ToDoList.query.all()
         return render_template('todolist.html', tasks = tasks, form = form, title = title)
 
-
+#deletes task that user inputted
 @myobj.route('/delete/<int:id>')
 def delete(id):
     delete_task = ToDoList.query.get_or_404(id)
@@ -140,6 +153,8 @@ def delete(id):
 
 
 displaylist = []
+
+#Rendering the PROCESS of making flash card
 @login_required
 @myobj.route('/makeflashcards/<int:num>', methods = ['GET', 'POST'])
 def makeflashcards(num):
@@ -155,6 +170,7 @@ def makeflashcards(num):
     return render_template('fccreate.html', form = form, displaylist = displaylist)
 
 
+#rendering the flash card by getting the url, then by publishing it with different templates 
 @login_required
 @myobj.route('/renderfc/<int:num>')
 def renderfc(num):
@@ -170,19 +186,23 @@ def renderfc(num):
     return render_template('renderfc.html', title = title, templist = templist)
 
 
-
+#combination of numbers from 0-9 with 4 placeholders, for variety of distinct urls
 def fourdigitcombo():
     return (1000 * randint(0,9)) + (100 *randint(0,9)) +  (10 * randint(0,9)) + randint(0,9)
 
+#checks if the fourdigitcombo() is already in database
 def inthedatabase(num):
     return  db.session.query(db.exists().where(Flashcard.fcurl == num)).scalar()
 
+#after taking in input from fourdigitcombo() and 
 def uniqueurl():
     finalnum = fourdigitcombo()
     while(inthedatabase(finalnum)):
         finalnum = fourdigitcombo()
     return finalnum
 
+#returns urls of flashcards
+#since some of the terms have the same url, it doesn't duplicate the url
 def listofurls():
     templist = []
     flashcards = Flashcard.query.filter_by(owner = current_user.username).all()
@@ -196,6 +216,8 @@ def listofurls():
     
     return noduplicates
 
+
+#checks the phrase user inputted to find similar flash cards
 def similarity(phrase):
     templist = []
     flashcards = Flashcard.query.filter_by(owner = current_user.username).all()
