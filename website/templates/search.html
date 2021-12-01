@@ -5,9 +5,29 @@
 <h2>You Searched For...</h2>
 <p>{{ searched }}</p>
 
-{% for items in templist %}
-    {{items.url}} {{items.title}}
-{% endfor %}
+
+<form method = "POST" novalidate>
+    {{ form.hidden_tag() }}
+    <div class="card">
+        <div class="card-header">
+          Recent Flash-Cards
+        </div>
+    <div class="row">
+        {% for items in templist %}
+        <div class="col-sm-2">
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title">{{ items.title }}</h5>
+                <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
+                <a href="/renderfc/{{ items.url }}" class="btn btn-primary">View</a>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+    </div>
+</form>
+
+
 
 
 {% endblock %}

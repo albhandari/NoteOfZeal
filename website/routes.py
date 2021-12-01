@@ -63,7 +63,7 @@ def login():
                 login_user(user, remember = False)
                 return redirect(url_for('home'))
 
-        return '<h1>Invalid username or password</h1>'
+        flash(f'Invalid username or password')
     return render_template('login.html', form = form)
 
 @myobj.context_processor
@@ -73,7 +73,7 @@ def base():
 
 
 
-@myobj.route('/search', methods = ["POST"])
+@myobj.route('/search', methods = ['GET',"POST"])
 def search():
     form = SearchForm()
     flashcards = Flashcard.query
@@ -102,7 +102,11 @@ def signup():
         db.session.add(newUser)
         db.session.commit()
 
-        return '<h1>New user has been created</h1>'
+        flash(f"Login with your newly created account")
+
+        return redirect ('/login')
+
+
 
     return render_template('signup.html', form = form)
 
