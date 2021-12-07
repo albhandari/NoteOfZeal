@@ -24,6 +24,11 @@ class FlashCardForm(FlaskForm):
     fcdef = StringField('Description', validators = [InputRequired()])
     addfc = SubmitField('Add')
 
+class ShareForm(FlaskForm):
+    sharedwith = StringField('Share with', validators = [InputRequired()])
+    submit = SubmitField('Add User')
+
+
 class SearchForm(FlaskForm):
     searched = StringField("Searched", validators = [DataRequired()])
     submit = SubmitField("Submit")
