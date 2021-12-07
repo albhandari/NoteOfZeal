@@ -1,7 +1,7 @@
 from website import myobj, db
-from website.models import User, ToDoList, Flashcard
+from website.models import User, ToDoList, Flashcard, Sharing
 from flask import render_template, flash, redirect, url_for, request
-from website.forms import LoginForm, SignupForm, ToDoListForm, FlashCardForm, SearchForm
+from website.forms import LoginForm, SignupForm, ToDoListForm, FlashCardForm, SearchForm, ShareForm
 from flask_bootstrap import Bootstrap
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import login_user, login_required, logout_user, current_user
@@ -26,10 +26,11 @@ def home():
     displaylist.clear() 
     flashcardurl = uniqueurl()                  #url for each specific flashcard
     url = f'/makeflashcards/{flashcardurl}'
+    owner = current_user.username
 
     thelist = listofurls()
 
-    return render_template('home.html', url = url, thelist = thelist)
+    return render_template('home.html', url = url, thelist = thelist, owner = owner)
 
 
 #page for all the flashcards related implementation
@@ -38,13 +39,14 @@ def home():
 def flashboard():
     displaylist.clear() 
     flashcardurl = uniqueurl()
-    url = f'/makeflashcards/{flashcardurl}'
+    url = f'/makeflashcards/{flashcardurl}' 
 
-    thelist = listofurls()
+    thelist = listofurls() #user's own flashcard
+    sharedlist = sharedFlashCardslist()
 
 
 
-    return render_template('flashboard.html', url = url, thelist = thelist)
+    return render_template('flashboard.html', url = url, thelist = thelist, sharedlist = sharedlist)
 
 
 #uses current_User from flask_login to get current User id and removes from the sqldatabase
@@ -172,18 +174,35 @@ def makeflashcards(num):
 
 #rendering the flash card by getting the url, then by publishing it with different templates 
 @login_required
-@myobj.route('/renderfc/<int:num>')
+@myobj.route('/renderfc/<int:num>', methods = ['GET', 'POST'])
 def renderfc(num):
+    currentowner =  (Flashcard.query.filter_by(fcurl = num).first()).owner == current_user.username
+    form = ShareForm()
+    color = 'danger'
+
     templist = []
     flashcards = Flashcard.query.filter_by(fcurl = num).all()
     for flashcard in flashcards:
         title = flashcard.fctitle
         templist.append({'term': flashcard.fcterm, 'description':flashcard.fcdesc})
+
+    if form.validate_on_submit():
+        if not alreadysharedwithuser(num, form.sharedwith.data.lower()):
+            newShared = Sharing(owner = current_user.username,title = title, cardnumber = num, sharedwith = form.sharedwith.data.lower())
+            db.session.add(newShared)
+            db.session.commit()
+            color = "success"
+            flash(f'Shared with user {form.sharedwith.data}')
+        else:
+            color = "danger"
+            flash(f'Error! Already shared with {form.sharedwith.data}')
+            return redirect(f'/renderfc/{num}')
     
 
+    
 
-
-    return render_template('renderfc.html', title = title, templist = templist)
+    
+    return render_template('renderfc.html', title = title, templist = templist, form = form, color = color, currentowner = currentowner)
 
 
 #combination of numbers from 0-9 with 4 placeholders, for variety of distinct urls
@@ -201,7 +220,7 @@ def uniqueurl():
         finalnum = fourdigitcombo()
     return finalnum
 
-#returns urls of flashcards
+#returns urls of user's own flashcard
 #since some of the terms have the same url, it doesn't duplicate the url
 def listofurls():
     templist = []
@@ -231,6 +250,28 @@ def similarity(phrase):
             noduplicates.append(items) 
     
     return noduplicates
+
+
+#returns true/false based on wether a flashcard is already shared with user
+def alreadysharedwithuser(number, username):
+    if(Sharing.query.filter_by(sharedwith = username).first() == None):
+        return False 
+    sharedusers = Sharing.query.filter_by(sharedwith = username.lower()).all()
+    for users in sharedusers:
+        if(users.cardnumber == number):
+            return True
+    return False
+
+def sharedFlashCardslist():
+    templist = []
+    flashcards = Sharing.query.filter_by(sharedwith = current_user.username.lower()).all()
+    for flashcard in flashcards:
+        templist.append({'url': flashcard.cardnumber, 'title':flashcard.title, 'owner':flashcard.owner}) 
+    
+    return templist
+
+
+
     
 
     

@@ -2,15 +2,15 @@
 {% block content %}
 
 <br/>
-<h2>You Searched For...</h2>
-<p>{{ searched }}</p>
+<h2>You Searched For: "{{ searched }}"</h2>
+
 
 
 <form method = "POST" novalidate>
     {{ form.hidden_tag() }}
     <div class="card">
         <div class="card-header">
-          Recent Flash-Cards
+          Flashcards with "{{ searched }}"
         </div>
     <div class="row">
         {% for items in templist %}
