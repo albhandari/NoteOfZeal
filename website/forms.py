@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField
+from wtforms import StringField, PasswordField, SubmitField, FileField
 
 from wtforms.validators import InputRequired,DataRequired,  Email, Length
 
@@ -27,8 +27,5 @@ class FlashCardForm(FlaskForm):
 class SearchForm(FlaskForm):
     searched = StringField("Searched", validators = [DataRequired()])
     submit = SubmitField("Submit")
-
-
-
 
 

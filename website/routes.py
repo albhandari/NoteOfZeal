@@ -1,14 +1,12 @@
 from website import myobj, db
 from website.models import User, ToDoList, Flashcard
 from flask import render_template, flash, redirect, url_for, request
-from website.forms import LoginForm, SignupForm, ToDoListForm, FlashCardForm, SearchForm
+from website.forms import LoginForm, SignupForm, ToDoListForm, FlashCardForm, SearchForm, UploadFileForm
 from flask_bootstrap import Bootstrap
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import login_user, login_required, logout_user, current_user
-
 from random import randint
-
-
+from werkzeug.utils import secure_filename
 #initial page when loading up is redirected to login-page
 @myobj.route("/")
 @login_required
@@ -231,7 +229,14 @@ def similarity(phrase):
             noduplicates.append(items) 
     
     return noduplicates
-    
 
-    
-
+@myobj.route('/upload')
+def upload_file():
+   return render_template('upload.html')
+	
+@myobj.route('/uploader', methods = ['GET', 'POST'])
+def upload_files():
+   if request.method == 'POST':
+      f = request.files['file']
+      f.save(secure_filename(f.filename))
+      return 'file uploaded successfully'
