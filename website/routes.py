@@ -179,6 +179,40 @@ def delete(id):
 
 displaylist = []
 
+@myobj.route('/blog', methods=['GET', 'POST'])
+@login_required
+
+def blog():
+    form=BlogForm()
+    title="Blog posts"
+    if request.method=='POST':
+        content=request.form['name']
+        content2=request.form['post']
+        newTitle=Blog(name=content,post=content2)
+        #newPost=Blog(post=content2)
+        try:
+            db.session.add(newTitle)
+            #db.session.add(newPost)
+            db.session.commit()
+            return redirect('/blog')
+        except:
+            return flash('Error')
+    else:
+        posts=Blog.query.all()
+        return render_template('blog.html', posts=posts, form=form, title=title)
+
+#deletes post that user inputted
+@myobj.route('/delete/<int:id>')
+def deletePost(id):
+    delete_post = Blog.query.get_or_404(id)
+    try:
+        db.session.delete(delete_post)
+        db.session.commit()
+        return redirect ('/blog')
+    except:
+        return flash ('Error')
+
+
 #Rendering the PROCESS of making flash card
 @login_required
 @myobj.route('/makeflashcards/<int:num>', methods = ['GET', 'POST'])
