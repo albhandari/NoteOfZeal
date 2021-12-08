@@ -1,5 +1,6 @@
+import datetime
 from website import myobj, db
-from website.models import User, ToDoList, Flashcard, Sharing
+from website.models import User, ToDoList, Flashcard, Sharing, Tracker
 from flask import render_template, flash, redirect, url_for, request
 from website.forms import LoginForm, SignupForm, ToDoListForm, FlashCardForm, SearchForm, ShareForm
 from flask_bootstrap import Bootstrap
@@ -8,7 +9,8 @@ from flask_login import login_user, login_required, logout_user, current_user
 
 from random import randint
 
-
+login_utc = datetime.datetime.utcnow()
+logout_utc = datetime.datetime.utcnow()
 #initial page when loading up is redirected to login-page
 @myobj.route("/")
 @login_required
@@ -66,16 +68,18 @@ def deleteacc():
 #simple login implementation, even hashes the password in the database
 @myobj.route("/login", methods = ['GET', 'POST'])
 def login():
+    color = "green"
     form = LoginForm()
     if form.validate_on_submit():
         user = User.query.filter_by(username = form.username.data).first()
         if user:
             if check_password_hash(user.password, form.password.data):
                 login_user(user, remember = False)
+                login_utc = datetime.datetime.utcnow()
                 return redirect(url_for('home'))
 
         flash(f'Invalid username or password')
-    return render_template('login.html', form = form)
+    return render_template('login.html', form = form, color = color)
 
 
 #wrapper to tell where to locate the form in NAV bar 
@@ -101,7 +105,12 @@ def search():
 @myobj.route('/logout')
 @login_required
 def logout():
+    logout_utc = datetime.datetime.utcnow()
+    sessionmins = Tracker(username = current_user.username, logintime = login_utc, logouttime = logout_utc, minutes = totalminutes(login_utc, logout_utc))
+    db.session.add(sessionmins)
+    db.session.commit()
     logout_user()
+    flash(f'You have successfully logged-out!')
     return redirect(url_for('login'))
 
 
@@ -269,6 +278,122 @@ def sharedFlashCardslist():
         templist.append({'url': flashcard.cardnumber, 'title':flashcard.title, 'owner':flashcard.owner}) 
     
     return templist
+
+def totalminutes(logintime, logouttime):
+    return round((logouttime - logintime).total_seconds()/60)
+
+
+
+@myobj.route('/admin')
+def admin():
+    users = User(username = 'alex', email = 'alex@gmail.com', password = generate_password_hash('password', method = 'sha256'))
+    db.session.add(users)
+    db.session.commit()
+
+    flashcard = Flashcard(owner = 'alex', fctitle = 'Math', fcterm = 'Addition', fcdesc = 'To add up stuff', fcurl = 4323)
+    db.session.add(flashcard)
+    db.session.commit()
+    flashcard = Flashcard(owner = 'alex', fctitle = 'Math', fcterm = 'Subtraction', fcdesc = 'To sum up stuff', fcurl = 4323)
+    db.session.add(flashcard)
+    db.session.commit()
+
+    flashcard = Flashcard(owner = 'alex', fctitle = 'Science', fcterm = 'Rocks', fcdesc = 'Hard Stuff on Planet', fcurl = 5643)
+    db.session.add(flashcard)
+    db.session.commit()
+    flashcard = Flashcard(owner = 'alex', fctitle = 'Science', fcterm = 'Another Rock', fcdesc = 'Another Hard stuff on planet', fcurl = 5643)
+    db.session.add(flashcard)
+    db.session.commit()
+
+    flashcard = Flashcard(owner = 'alex', fctitle = 'Computer Science', fcterm = 'Java', fcdesc = 'Hard Stuff on Computer', fcurl = 4567)
+    db.session.add(flashcard)
+    db.session.commit()
+    flashcard = Flashcard(owner = 'alex', fctitle = 'Computer Science', fcterm = 'Python', fcdesc = 'Another Hard stuff on Computer', fcurl = 4567)
+    db.session.add(flashcard)
+    db.session.commit()
+
+    sharing = Sharing(owner = 'alex', title = 'Science', cardnumber = 5643, sharedwith = 'kiara')
+    db.session.add(sharing)
+    db.session.commit()
+
+    tracker = Tracker(username = 'alex',logintime = 1, logouttime =1, minutes = 10)
+    db.session.add(tracker)
+    db.session.commit()
+
+    tracker = Tracker(username = 'alex',logintime = 1, logouttime =1, minutes = 30)
+    db.session.add(tracker)
+    db.session.commit()
+
+    tracker = Tracker(username = 'alex',logintime = 1, logouttime =1, minutes = 40)
+    db.session.add(tracker)
+    db.session.commit()
+
+    tracker = Tracker(username = 'alex',logintime = 1, logouttime =1, minutes = 40)
+    db.session.add(tracker)
+    db.session.commit()
+
+
+
+
+
+
+    users = User(username = 'kiara', email = 'kiara@gmail.com', password = generate_password_hash('password', method = 'sha256'))
+    db.session.add(users)
+    db.session.commit()
+
+    flashcard = Flashcard(owner = 'kiara', fctitle = 'Art History', fcterm = 'Rome', fcdesc = 'They had stuff going on', fcurl = 6789)
+    db.session.add(flashcard)
+    db.session.commit()
+    flashcard = Flashcard(owner = 'kiara', fctitle = 'Art History', fcterm = 'Greece', fcdesc = 'They had stuff going on too', fcurl = 6789)
+    db.session.add(flashcard)
+    db.session.commit()
+
+    flashcard = Flashcard(owner = 'kiara', fctitle = 'Technology', fcterm = 'Phone', fcdesc = 'Play games on', fcurl = 6790)
+    db.session.add(flashcard)
+    db.session.commit()
+    flashcard = Flashcard(owner = 'kiara', fctitle = 'Technology', fcterm = 'Computer', fcdesc = 'Another way to play games on', fcurl = 6790)
+    db.session.add(flashcard)
+    db.session.commit()
+
+    flashcard = Flashcard(owner = 'kiara', fctitle = 'Random Stuff', fcterm = 'Paper', fcdesc = 'To Write on', fcurl = 6791)
+    db.session.add(flashcard)
+    db.session.commit()
+    flashcard = Flashcard(owner = 'kiara', fctitle = 'Random Stuff', fcterm = 'Pencil', fcdesc = 'To write with', fcurl = 6791)
+    db.session.add(flashcard)
+    db.session.commit()
+
+    sharing = Sharing(owner = 'kiara', title = 'Random Stuff', cardnumber = 6791, sharedwith = 'alex')
+    db.session.add(sharing)
+    db.session.commit()
+
+    sharing = Sharing(owner = 'kiara', title = 'Technology', cardnumber = 6790, sharedwith = 'alex')
+    db.session.add(sharing)
+    db.session.commit()
+
+    tracker = Tracker(username = 'kiara', logintime = 1, logouttime =1, minutes = 10)
+    db.session.add(tracker)
+    db.session.commit()
+
+    tracker = Tracker(username = 'kiara',logintime = 1, logouttime =1, minutes = 26)
+    db.session.add(tracker)
+    db.session.commit()
+
+    tracker = Tracker(username = 'kiara',logintime = 1, logouttime =1, minutes = 13)
+    db.session.add(tracker)
+    db.session.commit()
+
+    tracker = Tracker(username = 'kiara',logintime = 1, logouttime =1, minutes = 26)
+    db.session.add(tracker)
+    db.session.commit()
+
+
+
+
+
+    
+
+
+
+
 
 
 

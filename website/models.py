@@ -24,17 +24,14 @@ class Flashcard(UserMixin, db.Model):
     fcterm =  db.Column(db.String(64))
     fcdesc = db.Column(db.String(5000))
     fcurl = db.Column(db.Integer)
-    sharedwith = db.Column(db.String(64))
 
 #Tracking the progress bar
 class Tracker(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key = True)
-    username = db.Column(db.String(15), unique = True)
-    mostrecent = db.Column(db.Integer)
-    secondrecent = db.Column(db.Integer) 
-    thirdrecent = db.Column(db.Integer)
+    username = db.Column(db.String(64))
     logintime = db.Column(db.Integer)
     logouttime = db.Column(db.Integer)
+    minutes = db.Column(db.Integer)
 
 class Sharing(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key = True)
@@ -42,7 +39,6 @@ class Sharing(UserMixin, db.Model):
     title = db.Column(db.String(64))
     cardnumber = db.Column(db.Integer)
     sharedwith = db.Column(db.String(64))
-
 
 
 
