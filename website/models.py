@@ -16,6 +16,13 @@ class ToDoList(UserMixin, db.Model):
     name = db.Column(db.String(64))
     complete = db.Column(db.Boolean)
 
+#Blog model
+class Blog(UserMixin, db.Model):
+    id = db.Column(db.Integer, primary_key = True)
+    name = db.Column(db.String(64))
+    post = db.Column(db.String(64))
+    complete = db.Column(db.Boolean)  
+  
 #Flashcard model
 class Flashcard(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key = True)
