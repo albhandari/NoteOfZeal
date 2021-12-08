@@ -1,12 +1,14 @@
 from website import myobj, db
 from website.models import User, ToDoList, Flashcard, Sharing
-from flask import render_template, flash, redirect, url_for, request
+from flask import render_template, flash, redirect, url_for, request, session
 from website.forms import LoginForm, SignupForm, ToDoListForm, FlashCardForm, SearchForm, ShareForm
 from flask_bootstrap import Bootstrap
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import login_user, login_required, logout_user, current_user
 from random import randint
+from flaskext.markdown import Markdown
 from werkzeug.utils import secure_filename
+import markdown.extensions.fenced_code
 #initial page when loading up is redirected to login-page
 @myobj.route("/")
 @login_required
@@ -124,6 +126,7 @@ def signup():
 #To-do list that allows user to store bullet point list
 #which they can check off and will be removed from the database
 @myobj.route('/todolist', methods = ['GET', 'POST'])
+@login_required
 def todotlist():
     form = ToDoListForm()
     title = "To do list"
@@ -268,6 +271,7 @@ def sharedFlashCardslist():
     return templist
 
 @myobj.route('/upload')
+@login_required
 def upload_file():
    return render_template('upload.html')
 	
@@ -276,4 +280,14 @@ def upload_files():
    if request.method == 'POST':
       f = request.files['file']
       f.save(secure_filename(f.filename))
-      return 'file uploaded successfully'
+      session['name'] = f.filename
+      return redirect ('/rendernotes')
+
+@myobj.route('/rendernotes')
+def render_notes():
+    name = session.get('name', None)
+    readme_file = open(name, "r")
+    md_template_string = markdown.markdown(
+        readme_file.read(), extensions=["fenced_code"]
+    )
+    return md_template_string

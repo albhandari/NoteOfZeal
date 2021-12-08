@@ -4,13 +4,13 @@ import os
 basedir = os.path.abspath(os.path.dirname(__file__))
 from flask_login import LoginManager
 from werkzeug.utils import secure_filename
-
+from flaskext.markdown import Markdown
  #Initializing myobj as our whole structure
 
 myobj = Flask(__name__)
 myobj.config['MAX_CONTENT_PATH'] = 16*1024*1024
 myobj.config['UPLOAD_FOLDER'] = '/home/'
-
+Markdown(myobj)
 #initializing and configuring necessary elements for program to run
 myobj.config.from_mapping(
     SECRET_KEY = 'somesecretkey',
