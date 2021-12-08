@@ -18,6 +18,11 @@ class ToDoListForm(FlaskForm):
     name = StringField('Enter a task', validators = [InputRequired()])
     addtask = SubmitField('Add task')
 
+class BlogForm(FlaskForm):
+    name = StringField('Enter blog title', validators = [InputRequired()])
+    post = StringField('Enter blog post', validators = [InputRequired()])
+    addPost = SubmitField('Add post')
+    
 class FlashCardForm(FlaskForm):
     fctitle = StringField('Title', validators = [InputRequired()])
     fcword = StringField('Term', validators = [InputRequired()])
