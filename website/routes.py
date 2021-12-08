@@ -1,8 +1,8 @@
 import datetime
 from website import myobj, db
-from website.models import User, ToDoList, Flashcard, Sharing, Tracker
+from website.models import User, ToDoList, Flashcard, Sharing, Tracker, Blog
 from flask import render_template, flash, redirect, url_for, request, session
-from website.forms import LoginForm, SignupForm, ToDoListForm, FlashCardForm, SearchForm, ShareForm
+from website.forms import LoginForm, SignupForm, ToDoListForm, FlashCardForm, SearchForm, ShareForm, BlogForm
 from flask_bootstrap import Bootstrap
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import login_user, login_required, logout_user, current_user
