@@ -1,12 +1,15 @@
 import datetime
 from website import myobj, db
 from website.models import User, ToDoList, Flashcard, Sharing, Tracker
-from flask import render_template, flash, redirect, url_for, request
+from flask import render_template, flash, redirect, url_for, request, session
 from website.forms import LoginForm, SignupForm, ToDoListForm, FlashCardForm, SearchForm, ShareForm
 from flask_bootstrap import Bootstrap
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import login_user, login_required, logout_user, current_user
 from random import randint
+from flaskext.markdown import Markdown
+from werkzeug.utils import secure_filename
+import markdown.extensions.fenced_code
 
 login_utc = datetime.datetime.utcnow()
 logout_utc = datetime.datetime.utcnow()
@@ -395,14 +398,12 @@ def upload_file():
 def upload_files():
    if request.method == 'POST':
       f = request.files['file']
-      f.save(secure_filename(f.filename))
-      session['name'] = f.filename
+      f.save(secure_filename('test.md'))
       return redirect ('/rendernotes')
 
 @myobj.route('/rendernotes')
 def render_notes():
-    name = session.get('name', None)
-    readme_file = open(name, "r")
+    readme_file = open('test.md', "r")
     md_template_string = markdown.markdown(
         readme_file.read(), extensions=["fenced_code"]
     )

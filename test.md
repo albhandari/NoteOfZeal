@@ -1,3 +1,5 @@
-# Render Markdown Notes
+# NotesOfZeal
+Lean, advanced, and easy to use note taking program.
 
-Hello how are you
+
+This is a different test file (another file)
