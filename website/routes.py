@@ -1,26 +1,15 @@
 import datetime
 from website import myobj, db
-<<<<<<< HEAD
 from website.models import User, ToDoList, Flashcard, Sharing, Tracker
 from flask import render_template, flash, redirect, url_for, request
-=======
-from website.models import User, ToDoList, Flashcard, Sharing
-from flask import render_template, flash, redirect, url_for, request, session
->>>>>>> 0d9f2976131a2cee03370431d1a97289a994a467
 from website.forms import LoginForm, SignupForm, ToDoListForm, FlashCardForm, SearchForm, ShareForm
 from flask_bootstrap import Bootstrap
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import login_user, login_required, logout_user, current_user
 from random import randint
-<<<<<<< HEAD
 
 login_utc = datetime.datetime.utcnow()
 logout_utc = datetime.datetime.utcnow()
-=======
-from flaskext.markdown import Markdown
-from werkzeug.utils import secure_filename
-import markdown.extensions.fenced_code
->>>>>>> 0d9f2976131a2cee03370431d1a97289a994a467
 #initial page when loading up is redirected to login-page
 @myobj.route("/")
 @login_required
@@ -289,7 +278,6 @@ def sharedFlashCardslist():
     
     return templist
 
-<<<<<<< HEAD
 def totalminutes(logintime, logouttime):
     return round((logouttime - logintime).total_seconds()/60)
 
@@ -398,21 +386,6 @@ def admin():
 
 
 
-
-
-    
-
-
-
-
-
-
-
-    
-
-    
-
-=======
 @myobj.route('/upload')
 @login_required
 def upload_file():
@@ -434,4 +407,4 @@ def render_notes():
         readme_file.read(), extensions=["fenced_code"]
     )
     return md_template_string
->>>>>>> 0d9f2976131a2cee03370431d1a97289a994a467
+
