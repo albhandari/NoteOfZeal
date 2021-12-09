@@ -2,28 +2,28 @@ from website import db
 from flask_login import UserMixin
 from website import logging 
 
- #user model
+ #user model for logging in and signing up
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key = True)
-    username = db.Column(db.String(15), unique = True)
+    username = db.Column(db.String(30), unique = True)
     email = db.Column(db.String(50), unique = True)
     password = db.Column(db.String(80))
 
 
-#todolist model
+#todolist model to store user's to-do-list
 class ToDoList(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key = True)
     name = db.Column(db.String(64))
     complete = db.Column(db.Boolean)
 
-#Blog model
+#Blog model for storing user's blogs
 class Blog(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key = True)
     name = db.Column(db.String(64))
     post = db.Column(db.String(64))
     complete = db.Column(db.Boolean)  
   
-#Flashcard model
+#Flashcard model to store Flashcard and it's terms
 class Flashcard(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key = True)
     owner = db.Column(db.String(64))
@@ -32,7 +32,7 @@ class Flashcard(UserMixin, db.Model):
     fcdesc = db.Column(db.String(5000))
     fcurl = db.Column(db.Integer)
 
-#Tracking the progress bar
+#Tracking the progress bar for progress bar
 class Tracker(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key = True)
     username = db.Column(db.String(64))
@@ -40,6 +40,7 @@ class Tracker(UserMixin, db.Model):
     logouttime = db.Column(db.Integer)
     minutes = db.Column(db.Integer)
 
+#tracks each Flashcard and which user it's shared to
 class Sharing(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key = True)
     owner = db.Column(db.String(64))
@@ -47,6 +48,7 @@ class Sharing(UserMixin, db.Model):
     cardnumber = db.Column(db.Integer)
     sharedwith = db.Column(db.String(64))
 
+#Stores user's journals
 class Journal(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key = True)
     owner = db.Column(db.String(64))

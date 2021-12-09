@@ -2,15 +2,7 @@
 
 {% block content %}
 
-{% with messages = get_flashed_messages() %}
-{% if messages %}
-{% for message in messages %}
-<div class="alert alert-{{color}}" role="alert">
-  {{ message }}
-</div>
-{% endfor %}
-{% endif %}
-{% endwith %}
+
 
 <div class="shadow p-3 mb-5 bg-primary bg-opacity-0 rounded mx-auto" style="width: 1000px;">
     <div class="card text-center">
