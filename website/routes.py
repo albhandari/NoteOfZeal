@@ -15,9 +15,8 @@ login_utc = datetime.datetime.utcnow()
 logout_utc = datetime.datetime.utcnow()
 #initial page when loading up is redirected to login-page
 @myobj.route("/")
-@login_required
 def mainMenu():
-    return redirect(url_for('login'))
+    return render_template('index.html')
 
 
 #home page
