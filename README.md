@@ -1,5 +1,9 @@
 # Notes Of Zeal
 
+![Screen Shot 2021-12-09 at 6 10 45 AM](https://user-images.githubusercontent.com/87745895/145411785-b86471b3-860b-450c-8b3e-40de00adeffb.png)
+
+
+
 ### How to Run
 * In terminal type python3 run.py when you're in the same file level as run.py
 
