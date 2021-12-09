@@ -25,6 +25,21 @@ def mainMenu():
 @login_required
 def home():
 
+    #clears flashcards from /makeflashcards
+    #so there isn't visual conflict
+    displaylist.clear() 
+    flashcardurl = uniqueurl()                  #url for each specific flashcard
+    url = f'/makeflashcards/{flashcardurl}'
+    owner = current_user.username
+
+    thelist = listofurls()
+
+    return render_template('home.html', url = url, thelist = thelist, owner = owner)
+
+#home page
+@myobj.route("/error")
+@login_required
+def error():
 
     #clears flashcards from /makeflashcards
     #so there isn't visual conflict
@@ -35,15 +50,7 @@ def home():
 
     thelist = listofurls()
 
-
-    #session tracker
-    history = lastthreesessions(listofsessions(owner))
-
-    randomnumber = 50
-
-
-
-    return render_template('home.html', url = url, thelist = thelist, owner = owner, history = history)
+    return render_template('error.html', url = url, thelist = thelist, owner = owner)
 
 
 #page for all the flashcards related implementation
@@ -117,11 +124,9 @@ def search():
 @login_required
 def logout():
     logout_utc = datetime.datetime.utcnow()
-    if(totalminutes(login_utc, logout_utc) >= 1):
-        sessionmins = Tracker(username = current_user.username, logintime = login_utc, logouttime = logout_utc, minutes = totalminutes(login_utc, logout_utc))
-        db.session.add(sessionmins)
-        db.session.commit()
-
+    sessionmins = Tracker(username = current_user.username, logintime = login_utc, logouttime = logout_utc, minutes = totalminutes(login_utc, logout_utc))
+    db.session.add(sessionmins)
+    db.session.commit()
     logout_user()
     flash(f'You have successfully logged-out!')
     return redirect(url_for('login'))
@@ -160,11 +165,11 @@ def todotlist():
             db.session.commit()
             return redirect('/todolist')
         except:
-            return flash('Error')
+            return redirect('/error')
     else:
         tasks = ToDoList.query.all()
         return render_template('todolist.html', tasks = tasks, form = form, title = title)
-
+    
 #deletes task that user inputted
 @myobj.route('/delete/<int:id>')
 def delete(id):
@@ -174,8 +179,7 @@ def delete(id):
         db.session.commit()
         return redirect ('/todolist')
     except:
-        return flash ('Error')
-
+        return redirect('/error')
 
 displaylist = []
 
@@ -196,7 +200,7 @@ def blog():
             db.session.commit()
             return redirect('/blog')
         except:
-            return flash('Error')
+            return redirect('/error')
     else:
         posts=Blog.query.all()
         return render_template('blog.html', posts=posts, form=form, title=title)
@@ -210,7 +214,9 @@ def deletePost(id):
         db.session.commit()
         return redirect ('/blog')
     except:
-        return flash ('Error')
+        return redirect('/error')
+
+
 
 
 #Rendering the PROCESS of making flash card
@@ -330,96 +336,6 @@ def totalminutes(logintime, logouttime):
     return round((logouttime - logintime).total_seconds()/60)
 
 
-def listofsessions(username):
-    templist = []
-    if (Tracker.query.filter_by(username = username).first() == None):
-        return []
-    sessions = Tracker.query.filter_by(username = username).all()
-    for eachsession in sessions:
-        templist.append(eachsession.minutes)
-    
-    return templist
-
-def lastthreesessions(list):
-    finallist = []
-    iterator = 1
-    totalsum = 0
-
-
-    while(iterator <= len(list) and iterator <= 3):
-        finallist.append({"displaytime": f'{list[-iterator]} minutes' if list[-iterator] < 60 else f'{int(list[-iterator] / 60) } hours and {list[-iterator] % 60} minutes', 'percentage': list[-iterator]})
-        totalsum += list[-iterator]
-        iterator += 1
-    
-    for items in finallist:
-        items['percentage'] = int((items['percentage'] / totalsum) * 100)
-    return finallist
-
-
-
-
-
-@myobj.route('/upload')
-@login_required
-def upload_file():
-   return render_template('upload.html')
-	
-@myobj.route('/uploader', methods = ['GET', 'POST'])
-def upload_files():
-   if request.method == 'POST':
-      f = request.files['file']
-      f.save(secure_filename('test.md'))
-      return redirect ('/rendernotes')
-
-@myobj.route('/rendernotes')
-def render_notes():
-    readme_file = open('test.md', "r")
-    md_template_string = markdown.markdown(
-        readme_file.read(), extensions=["fenced_code"]
-    )
-    return md_template_string
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 @myobj.route('/admin')
 def admin():
@@ -521,3 +437,26 @@ def admin():
     tracker = Tracker(username = 'kiara',logintime = 1, logouttime =1, minutes = 26)
     db.session.add(tracker)
     db.session.commit()
+
+
+
+@myobj.route('/upload')
+@login_required
+def upload_file():
+   return render_template('upload.html')
+	
+@myobj.route('/uploader', methods = ['GET', 'POST'])
+def upload_files():
+   if request.method == 'POST':
+      f = request.files['file']
+      f.save(secure_filename('test.md'))
+      return redirect ('/rendernotes')
+
+@myobj.route('/rendernotes')
+def render_notes():
+    readme_file = open('test.md', "r")
+    md_template_string = markdown.markdown(
+        readme_file.read(), extensions=["fenced_code"]
+    )
+    return md_template_string
+
