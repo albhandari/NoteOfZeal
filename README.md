@@ -1,5 +1,22 @@
 # Notes Of Zeal
 
+### How to Run
+* In terminal type python3 run.py when you're in the same file level as run.py
+
+
+### Required installs
+* pip install flask 
+* pip install markdown 
+* pip install pdfkit 
+* pip install sqlalchemy 
+* pip install flask_login 
+* pip install flask_bootstrap 
+* pip install flask_wtf 
+* pip install wtforms 
+* pip install email_validator
+* pip install Flask-markdown
+* pip install Flask markdown
+
 ### Features added
 1. Login/Sign in/Sign up
     * User is able to Sign-up and Login. Also able to logout
