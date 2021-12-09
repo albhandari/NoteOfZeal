@@ -15,9 +15,8 @@ login_utc = datetime.datetime.utcnow()
 logout_utc = datetime.datetime.utcnow()
 #initial page when loading up is redirected to login-page
 @myobj.route("/")
-@login_required
 def mainMenu():
-    return redirect(url_for('login'))
+    return render_template('index.html')
 
 
 #home page
@@ -25,6 +24,22 @@ def mainMenu():
 @login_required
 def home():
 
+    #clears flashcards from /makeflashcards
+    #so there isn't visual conflict
+    displaylist.clear() 
+    flashcardurl = uniqueurl()                  #url for each specific flashcard
+    url = f'/makeflashcards/{flashcardurl}'
+    owner = current_user.username
+
+    thelist = listofurls()
+    history = lastthreesessions(listofsessions(owner))
+
+    return render_template('home.html', url = url, thelist = thelist, owner = owner, history = history)
+
+#home page
+@myobj.route("/error")
+@login_required
+def error():
 
     #clears flashcards from /makeflashcards
     #so there isn't visual conflict
@@ -35,15 +50,7 @@ def home():
 
     thelist = listofurls()
 
-
-    #session tracker
-    history = lastthreesessions(listofsessions(owner))
-
-    randomnumber = 50
-
-
-
-    return render_template('home.html', url = url, thelist = thelist, owner = owner, history = history)
+    return render_template('error.html', url = url, thelist = thelist, owner = owner)
 
 
 #page for all the flashcards related implementation
@@ -117,11 +124,9 @@ def search():
 @login_required
 def logout():
     logout_utc = datetime.datetime.utcnow()
-    if(totalminutes(login_utc, logout_utc) >= 1):
-        sessionmins = Tracker(username = current_user.username, logintime = login_utc, logouttime = logout_utc, minutes = totalminutes(login_utc, logout_utc))
-        db.session.add(sessionmins)
-        db.session.commit()
-
+    sessionmins = Tracker(username = current_user.username, logintime = login_utc, logouttime = logout_utc, minutes = totalminutes(login_utc, logout_utc))
+    db.session.add(sessionmins)
+    db.session.commit()
     logout_user()
     flash(f'You have successfully logged-out!')
     return redirect(url_for('login'))
@@ -160,11 +165,11 @@ def todotlist():
             db.session.commit()
             return redirect('/todolist')
         except:
-            return flash('Error')
+            return redirect('/error')
     else:
         tasks = ToDoList.query.all()
         return render_template('todolist.html', tasks = tasks, form = form, title = title)
-
+    
 #deletes task that user inputted
 @myobj.route('/delete/<int:id>')
 def delete(id):
@@ -174,8 +179,7 @@ def delete(id):
         db.session.commit()
         return redirect ('/todolist')
     except:
-        return flash ('Error')
-
+        return redirect('/error')
 
 displaylist = []
 
@@ -196,7 +200,7 @@ def blog():
             db.session.commit()
             return redirect('/blog')
         except:
-            return flash('Error')
+            return redirect('/error')
     else:
         posts=Blog.query.all()
         return render_template('blog.html', posts=posts, form=form, title=title)
@@ -210,7 +214,9 @@ def deletePost(id):
         db.session.commit()
         return redirect ('/blog')
     except:
-        return flash ('Error')
+        return redirect('/error')
+
+
 
 
 #Rendering the PROCESS of making flash card
@@ -462,44 +468,6 @@ def render_notes():
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 @myobj.route('/admin')
 def admin():
     users = User(username = 'alex', email = 'alex@gmail.com', password = generate_password_hash('password', method = 'sha256'))
@@ -600,3 +568,7 @@ def admin():
     tracker = Tracker(username = 'kiara',logintime = 1, logouttime =1, minutes = 26)
     db.session.add(tracker)
     db.session.commit()
+
+
+
+
