@@ -2,31 +2,59 @@
 
 {% block content %}
 
+<div class="bg-body rounded mx-auto" style="width: 220px;">
+  <h2>Blogs of Users</h2>
 
-<div class="bg-body rounded mx-auto" style="width: 1900px;">
-    <h1>Blogs of Users</h1>
-    <form method = "POST" novalidate>
-      <p> {{form.name.label}} {{form.name (size=64)}} {{form.post.label}} {{form.post (size=64)}} {{form.addPost (size=32)}} </p>
 </div>
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary"></nav>
+<br>
+
+
+<div class="card">
+  <div class="bg-primary bg-opacity-10  card-body">
+      <div class="bg-primary bg-opacity-10  card-body">
+        <form method = "POST" novalidate>
+          <p> {{form.name.label}} {{form.name (size=64)}} {{form.post.label}} {{form.post (size=64)}} {{form.addPost (size=32)}} </p>
+      </div>
+  </div>
+</div>
+
 <br>
 <br>
 
 <table>
   <tr>
     <div class="bg-body rounded mx-auto" style="width: 1900px;">
-        <h3>Task Actions</h3>
-    
+        <h3>Blogs</h3>
     </div>
   </tr>
+
+
+
+
   {% for thing in posts %}
-  <tr>
-    <td style= 'color:black;'>{{thing.name}}</td>
-    <td>
-      <a href="delete/{{thing.id}}" style="margin-left: 10px;">Delete</a>
-    <br><br><br>
-    <td style= 'color:black;'>{{thing.post}}</td>
-  </tr>
+  <div class="card">
+    <div class="bg-primary bg-opacity-10  card-body">
+      <div class="card">
+        <div class="card-body">
+          <h4><strong>{{ thing.title }}</strong></h4>
+          <div class="card">
+            <div class="card-body">
+              <h5>{{ thing.username }}:</h5>
+              <p>{{ thing.post }}</p>
+              {% if thing.username == current_user.username %}
+              <a href="/del/{{thing.id}}"style="margin-left: 0px;">Delete</a>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <br>
   {% endfor %}
+
 </table>
 
 {% endblock %}

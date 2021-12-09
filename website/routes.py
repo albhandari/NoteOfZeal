@@ -95,12 +95,12 @@ def flashboard():
 @login_required
 def deleteacc():
 
-
+    message = deleteverything(current_user.username)
     currentUser = User.query.filter_by(id=current_user.id).first()
     logout_user()
     db.session.delete(currentUser)
     db.session.commit()
-    flash(f'User has been deleted')
+    flash(f'{message}')
 
     return redirect(url_for('login'))
 
@@ -208,7 +208,7 @@ def todotlist():
     #otherwise redirects to /error without saving information
     if request.method == 'POST':
         content = request.form['name']
-        newtask = ToDoList(name = content)
+        newtask = ToDoList(username = current_user.username, name = content)
         try:
             db.session.add(newtask)
             db.session.commit()
@@ -216,7 +216,7 @@ def todotlist():
         except:
             return redirect('/error')
     else:
-        tasks = ToDoList.query.all() #list of tasks for rendering later
+        tasks = ToDoList.query.filter_by(username = current_user.username).all() #list of tasks for rendering later
         return render_template('todolist.html', tasks = tasks, form = form, title = title)
 
 
@@ -250,11 +250,9 @@ def blog():
     if request.method=='POST':
         content=request.form['name']
         content2=request.form['post']
-        newTitle=Blog(name=content,post=content2)
-        #newPost=Blog(post=content2)
+        newTitle=Blog(username = current_user.username ,title=content,post=content2)
         try:
             db.session.add(newTitle)
-            #db.session.add(newPost)
             db.session.commit()
             return redirect('/blog')
         except:
@@ -263,18 +261,20 @@ def blog():
         posts=Blog.query.all()
         return render_template('blog.html', posts=posts, form=form, title=title)
 
+
 #deletes post that user inputted
-@myobj.route('/delete/<int:id>')
-def deletePost(id):
-    delete_post = Blog.query.get_or_404(id)
-    try:
+@login_required
+@myobj.route('/del/<int:id>')
+def delpost(id):
+    delete_post = Blog.query.filter_by(id = id).first()
+    if(delete_post != None):
         db.session.delete(delete_post)
         db.session.commit()
         return redirect ('/blog')
-    except:
-        return redirect('/error')
-
-
+    else:
+        redirect('/error')
+    
+    return redirect('/blog')
 
 
 
@@ -584,114 +584,41 @@ def journalentrylist(username):
     
     return getmostrecentlist(templist)
     
+
+#deletes user from all instances of database based on username    
+def deleteverything(username):
+    if ToDoList.query.filter_by(username = username).first() != None:
+        for items in ToDoList.query.filter_by(username = username).all():
+            db.session.delete(items)
+            db.session.commit()
     
-
-
-
-
-
-
-
-@myobj.route('/admin')
-def admin():
-    users = User(username = 'alex', email = 'alex@gmail.com', password = generate_password_hash('password', method = 'sha256'))
-    db.session.add(users)
-    db.session.commit()
-
-    flashcard = Flashcard(owner = 'alex', fctitle = 'Math', fcterm = 'Addition', fcdesc = 'To add up stuff', fcurl = 4323)
-    db.session.add(flashcard)
-    db.session.commit()
-    flashcard = Flashcard(owner = 'alex', fctitle = 'Math', fcterm = 'Subtraction', fcdesc = 'To sum up stuff', fcurl = 4323)
-    db.session.add(flashcard)
-    db.session.commit()
-
-    flashcard = Flashcard(owner = 'alex', fctitle = 'Science', fcterm = 'Rocks', fcdesc = 'Hard Stuff on Planet', fcurl = 5643)
-    db.session.add(flashcard)
-    db.session.commit()
-    flashcard = Flashcard(owner = 'alex', fctitle = 'Science', fcterm = 'Another Rock', fcdesc = 'Another Hard stuff on planet', fcurl = 5643)
-    db.session.add(flashcard)
-    db.session.commit()
-
-    flashcard = Flashcard(owner = 'alex', fctitle = 'Computer Science', fcterm = 'Java', fcdesc = 'Hard Stuff on Computer', fcurl = 4567)
-    db.session.add(flashcard)
-    db.session.commit()
-    flashcard = Flashcard(owner = 'alex', fctitle = 'Computer Science', fcterm = 'Python', fcdesc = 'Another Hard stuff on Computer', fcurl = 4567)
-    db.session.add(flashcard)
-    db.session.commit()
-
-    sharing = Sharing(owner = 'alex', title = 'Science', cardnumber = 5643, sharedwith = 'kiara')
-    db.session.add(sharing)
-    db.session.commit()
-
-    tracker = Tracker(username = 'alex',logintime = 1, logouttime =1, minutes = 10)
-    db.session.add(tracker)
-    db.session.commit()
-
-    tracker = Tracker(username = 'alex',logintime = 1, logouttime =1, minutes = 30)
-    db.session.add(tracker)
-    db.session.commit()
-
-    tracker = Tracker(username = 'alex',logintime = 1, logouttime =1, minutes = 40)
-    db.session.add(tracker)
-    db.session.commit()
-
-    tracker = Tracker(username = 'alex',logintime = 1, logouttime =1, minutes = 40)
-    db.session.add(tracker)
-    db.session.commit()
-
-
-
-
-
-
-    users = User(username = 'kiara', email = 'kiara@gmail.com', password = generate_password_hash('password', method = 'sha256'))
-    db.session.add(users)
-    db.session.commit()
-
-    flashcard = Flashcard(owner = 'kiara', fctitle = 'Art History', fcterm = 'Rome', fcdesc = 'They had stuff going on', fcurl = 6789)
-    db.session.add(flashcard)
-    db.session.commit()
-    flashcard = Flashcard(owner = 'kiara', fctitle = 'Art History', fcterm = 'Greece', fcdesc = 'They had stuff going on too', fcurl = 6789)
-    db.session.add(flashcard)
-    db.session.commit()
-
-    flashcard = Flashcard(owner = 'kiara', fctitle = 'Technology', fcterm = 'Phone', fcdesc = 'Play games on', fcurl = 6790)
-    db.session.add(flashcard)
-    db.session.commit()
-    flashcard = Flashcard(owner = 'kiara', fctitle = 'Technology', fcterm = 'Computer', fcdesc = 'Another way to play games on', fcurl = 6790)
-    db.session.add(flashcard)
-    db.session.commit()
-
-    flashcard = Flashcard(owner = 'kiara', fctitle = 'Random Stuff', fcterm = 'Paper', fcdesc = 'To Write on', fcurl = 6791)
-    db.session.add(flashcard)
-    db.session.commit()
-    flashcard = Flashcard(owner = 'kiara', fctitle = 'Random Stuff', fcterm = 'Pencil', fcdesc = 'To write with', fcurl = 6791)
-    db.session.add(flashcard)
-    db.session.commit()
-
-    sharing = Sharing(owner = 'kiara', title = 'Random Stuff', cardnumber = 6791, sharedwith = 'alex')
-    db.session.add(sharing)
-    db.session.commit()
-
-    sharing = Sharing(owner = 'kiara', title = 'Technology', cardnumber = 6790, sharedwith = 'alex')
-    db.session.add(sharing)
-    db.session.commit()
-
-    tracker = Tracker(username = 'kiara', logintime = 1, logouttime =1, minutes = 10)
-    db.session.add(tracker)
-    db.session.commit()
-
-    tracker = Tracker(username = 'kiara',logintime = 1, logouttime =1, minutes = 26)
-    db.session.add(tracker)
-    db.session.commit()
-
-    tracker = Tracker(username = 'kiara',logintime = 1, logouttime =1, minutes = 13)
-    db.session.add(tracker)
-    db.session.commit()
-
-    tracker = Tracker(username = 'kiara',logintime = 1, logouttime =1, minutes = 26)
-    db.session.add(tracker)
-    db.session.commit()
+    if Blog.query.filter_by(username = username).first != None:
+        for items in Blog.query.filter_by(username = username).all():
+            db.session.delete(items)
+            db.session.commit()
+    
+    if Flashcard.query.filter_by(owner = username).first != None:
+        for items in Flashcard.query.filter_by(owner = username).all():
+            db.session.delete(items)
+            db.session.commit()
+    
+    if Tracker.query.filter_by(username = username).first != None:
+        for items in Tracker.query.filter_by(username = username).all():
+            db.session.delete(items)
+            db.session.commit()
+    
+    if Sharing.query.filter_by(sharedwith = username).first != None:
+        for items in Sharing.query.filter_by(sharedwith = username).all():
+            db.session.delete(items)
+            db.session.commit()
+    
+    if Journal.query.filter_by(owner = username).first != None:
+        for items in Journal.query.filter_by(owner = username).all():
+            db.session.delete(items)
+            db.session.commit()
+    
+    #return message for displaying later
+    return 'Successfully removed user from all database'
 
 
 

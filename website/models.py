@@ -13,15 +13,16 @@ class User(UserMixin, db.Model):
 #todolist model to store user's to-do-list
 class ToDoList(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key = True)
+    username = db.Column(db.String(64))
     name = db.Column(db.String(64))
     complete = db.Column(db.Boolean)
 
 #Blog model for storing user's blogs
 class Blog(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key = True)
-    name = db.Column(db.String(64))
-    post = db.Column(db.String(64))
-    complete = db.Column(db.Boolean)  
+    username = db.Column(db.String(64))
+    title = db.Column(db.String(64))
+    post = db.Column(db.String(64)) 
   
 #Flashcard model to store Flashcard and it's terms
 class Flashcard(UserMixin, db.Model):

@@ -17,14 +17,22 @@
         <h3>Task Actions</h3>
     
     </div>
-  </tr>
-  {% for task in tasks %}
-  <tr>
-    <td style= 'color:black;'>{{task.name}}</td>
-    <td>
-      <a href="delete/{{task.id}}" style="margin-left: 10px;">Delete</a>
-  </tr>
-  {% endfor %}
+
 </table>
 
+{% for task in tasks %}
+  <div class="card">
+    <div class="bg-primary bg-opacity-10  card-body">
+          <div class="card">
+            <div class="card-body">
+              <h4><strong>{{ task.name }}</strong></h4>
+              <a href="/delete/{{task.id}}"style="margin-left: 0px;">Done!</a>
+            </div>
+          </div>
+    </div>
+  </div>
+  <br>
+  {% endfor %}
+
 {% endblock %}
+
