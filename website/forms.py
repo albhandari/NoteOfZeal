@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, FileField
+from wtforms import StringField, PasswordField, SubmitField, FileField, TextAreaField
 
 from wtforms.validators import InputRequired,DataRequired,  Email, Length
 
@@ -37,5 +37,11 @@ class ShareForm(FlaskForm):
 class SearchForm(FlaskForm):
     searched = StringField("Searched", validators = [DataRequired()])
     submit = SubmitField("Submit")
+
+class JournalForm(FlaskForm):
+    jtitle = StringField("Journal Title")
+    jdesc = TextAreaField(validators = [InputRequired(), Length(max = 12081)])
+    submit = SubmitField("Submit Entry")
+
 
 

@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="bg-body rounded mx-auto" style="width: 220px;">
+    <h2>Your Journals</h2>
+
+</div>
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary"></nav>
+
+
+<br>
+
+{% for items in alljournal %}
+<div class="bg-body rounded mx-auto" style="width: 5000px;">
+    <h4>{{ items.date }}</h4>
+</div>
+
+<div class="card">
+    <div class="bg-primary bg-opacity-10  card-body">
+        <div class="bg-primary bg-opacity-10  card-body">
+            <h5><strong>{{ items.title }}</strong></h5>
+        </div>
+        <br>
+        <div class="bg-primary bg-opacity-10  card-body">
+            <p> {{ items.entry }} </p>
+        </div>
+    </div>
+</div>
+
+{% endfor %}
+
+{% endblock %}
+
+
+
+

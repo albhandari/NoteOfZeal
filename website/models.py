@@ -47,6 +47,12 @@ class Sharing(UserMixin, db.Model):
     cardnumber = db.Column(db.Integer)
     sharedwith = db.Column(db.String(64))
 
+class Journal(UserMixin, db.Model):
+    id = db.Column(db.Integer, primary_key = True)
+    owner = db.Column(db.String(64))
+    jtitle = db.Column(db.String(64))
+    jdesc =  db.Column(db.String(12081))
+    jdate = db.Column(db.String())
 
 
 @logging.user_loader

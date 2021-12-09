@@ -1,5 +1,5 @@
 # NotesOfZeal
 Lean, advanced, and easy to use note taking program.
 
-
-This is a different test file (another file)
+Ayyy juju on da beat
+This is a another test file

@@ -1,8 +1,8 @@
 import datetime
 from website import myobj, db
-from website.models import User, ToDoList, Flashcard, Sharing, Tracker, Blog
+from website.models import User, ToDoList, Flashcard, Sharing, Tracker, Blog, Journal
 from flask import render_template, flash, redirect, url_for, request, session
-from website.forms import LoginForm, SignupForm, ToDoListForm, FlashCardForm, SearchForm, ShareForm, BlogForm
+from website.forms import LoginForm, SignupForm, ToDoListForm, FlashCardForm, SearchForm, ShareForm, BlogForm, JournalForm
 from flask_bootstrap import Bootstrap
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import login_user, login_required, logout_user, current_user
@@ -262,6 +262,36 @@ def renderfc(num):
     return render_template('renderfc.html', title = title, templist = templist, form = form, color = color, currentowner = currentowner)
 
 
+@login_required
+@myobj.route('/makejournal', methods = ['GET', 'POST'])
+def makejournal():
+    form = JournalForm()
+
+    if form.validate_on_submit():
+        if form.jtitle.data == None or form.jdesc.data == None:
+            flash('Error: Make sure you enter valid Journal entry or Title')
+        else:
+            newentry = Journal(owner = current_user.username, jtitle = form.jtitle.data,  jdesc = form.jdesc.data, jdate = f'{datetime.datetime.utcnow()}'[0:10])
+            db.session.add(newentry)
+            db.session.commit()
+            flash('Success: Your journal Entry has been added')
+
+    return render_template('makejournal.html', form = form)
+
+@login_required
+@myobj.route('/renderjournal', methods = ['GET', 'POST'])
+def renderjournal():
+    alljournal = journalentrylist(current_user.username)
+
+    if len(alljournal) == 0:
+        flash('Make journal Entries to show them here!')
+
+
+    return render_template('renderjournal.html', alljournal = alljournal)
+ 
+
+
+
 #combination of numbers from 0-9 with 4 placeholders, for variety of distinct urls
 def fourdigitcombo():
     return (1000 * randint(0,9)) + (100 *randint(0,9)) +  (10 * randint(0,9)) + randint(0,9)
@@ -355,6 +385,55 @@ def lastthreesessions(list):
         items['percentage'] = int((items['percentage'] / totalsum) * 100)
     return finallist
 
+
+
+
+#gets the Date in 'Month Day, Year' format
+# 'str' format is always going to be '0000-00-00'
+
+# eg: '2020-03-27' returns 'March 27, 2020'
+def getDate(somestring):
+
+    year = somestring[0:4]  
+
+    monthList = [ 
+        {"01":"January"}, {"02":"February"}, {"03":"March"},
+        {"04":"April"}, {"05":"May"}, {"06":"June"},
+        {"07":"July"}, {"08":"August"}, {"09":"September"},
+        {"10":"October"}, {"11":"November"}, {"12":"December"},
+    ]
+    
+    #maps month # of string with the actual month name in monthList
+    month = monthList[int(somestring[5:7])-1][somestring[5:7]]
+    day = somestring[8:10]
+
+    return f'{month} {day}, {year}'
+
+
+
+#reverses inputted list
+def getmostrecentlist(inplist):
+    templist = []
+    iterator = 1
+    if len(inplist) > 0:
+        while iterator < len(inplist)+1:
+            templist.append(inplist[-iterator])
+            iterator = iterator + 1
+    return templist
+
+
+def journalentrylist(username):
+    templist = []
+    if Journal.query.filter_by(owner = username).first() == None:
+        return []
+    
+    tempjournalentry = Journal.query.filter_by(owner = username).all()
+    for items in tempjournalentry:
+        templist.append( {'date': getDate(items.jdate), 'title': items.jtitle, 'entry': items.jdesc, 'owner': current_user.username, } )
+    
+    return getmostrecentlist(templist)
+    
+    
 
 
 

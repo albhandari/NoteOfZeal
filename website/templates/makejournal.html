@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+
+{% with messages = get_flashed_messages() %}
+{% if messages %}
+<ul>
+    {%for message in messages %}
+    <li>{{ message }}</li>
+    {% endfor %}
+</ul>
+{% endif %}
+{% endwith %}
+
+
+<div class="bg-body rounded mx-auto" style="width: 160px;">
+    <h1>Journal</h1>
+</div>
+
+<div class="card">
+    <div class="bg-primary bg-opacity-10  card-body">
+        <form method = "POST" novalidate>
+            {{ form.hidden_tag() }}
+        
+            <p>
+                {{ form.jtitle.label(class="form-label") }}
+                {{ form.jtitle(class="form-control") }}
+            </p>
+            <p>
+                {{ form.jdesc.label(class="form-label") }}
+                {{ form.jdesc(class="form-control", rows="15") }}
+            </p>
+    
+            <p>
+                {{ form.submit(class="btn btn-primary") }}
+            </p>
+            
+        </form>
+    </div>
+  </div>
+
+
+    
+
+
+{% endblock %}
+
+
+
+
+
+
+
